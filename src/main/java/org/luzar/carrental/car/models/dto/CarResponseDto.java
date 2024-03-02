@@ -19,6 +19,10 @@ public record CarResponseDto(
 
         boolean rentable,
 
-        int priceCategory
+        int priceCategory,
+
+        boolean discarded,
+
+        LocalDate discardedDate
 ) {
 }

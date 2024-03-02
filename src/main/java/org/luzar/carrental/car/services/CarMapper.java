@@ -23,7 +23,9 @@ public class CarMapper {
                 .build();
     }
     public CarResponseDto carIntoResponseDto(Car car) {
-        return new CarResponseDto(
+        if (car == null) { //e.g. there is null output from DB, car not found
+            return null;
+        } else return new CarResponseDto(
                 car.getId(),
                 car.getBrand(),
                 car.getModel(),
@@ -32,7 +34,9 @@ public class CarMapper {
                 car.getMileage(),
                 car.getLicensePlate(),
                 car.isRentable(),
-                car.getPriceCategory()
+                car.getPriceCategory(),
+                car.isDiscarded(),
+                car.getDiscardedDate()
         );
     }
 }
