@@ -2,6 +2,8 @@ package org.luzar.carrental.car.models;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PositiveOrZero;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -23,9 +25,11 @@ public class Car {
     private Long id;
 
     @Column
+    @NotNull
     private String brand;
 
     @Column
+    @NotNull
     private String model;
 
     @Column
@@ -35,19 +39,19 @@ public class Car {
     private String color;
 
     @Column
-    private int mileage = 0;
+    private int mileage;
 
     @Column
     private String licensePlate;
 
     @Column
-    private boolean rentable = true;
+    private boolean rentable;
 
     @Column
     private int priceCategory;
 
     @Column
-    private boolean discarded = false;
+    private boolean discarded;
 
     @Column
     private LocalDate discardedDate;

@@ -2,6 +2,7 @@ package org.luzar.carrental.customer.models;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -23,18 +24,22 @@ public class Customer {
     private Long id;
 
     @Column
+    @NotNull
     private String firstName;
 
     @Column
+    @NotNull
     private String lastName;
 
-    @Column
+    @Column(updatable = false)
+    @NotNull
     private LocalDate birthDate;
 
     @Column
     private String address;
 
     @Column(unique = true)
+    @NotNull
     private String email;
 
     @Column

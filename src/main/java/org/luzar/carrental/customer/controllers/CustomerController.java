@@ -1,4 +1,4 @@
-package org.luzar.carrental.car.controllers;
+package org.luzar.carrental.customer.controllers;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -8,9 +8,11 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
-import org.luzar.carrental.car.models.dto.CarDto;
 import org.luzar.carrental.car.models.dto.CarResponseDto;
-import org.luzar.carrental.car.services.CarService;
+import org.luzar.carrental.customer.models.dto.CustomerDto;
+import org.luzar.carrental.customer.models.dto.CustomerRentalResponseDto;
+import org.luzar.carrental.customer.models.dto.CustomerResponseDto;
+import org.luzar.carrental.customer.services.CustomerService;
 import org.luzar.carrental.globalexceptionhandling.dto.ErrorDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,25 +23,30 @@ import java.util.List;
 @RestController
 @RequestMapping("/api")
 @AllArgsConstructor
-@Tag(name = "Car", description = "Car management Api")
-public class CarController {
-    public static final String CARURI = "/car";
+@Tag(name = "Customer", description = "Customer management Api")
+public class CustomerController {
+    public static final String CUSTOMERURI = "/customer";
 
-    private final CarService carService;
+    private CustomerService customerService;
 
     @Operation(
-            summary = "Add new car",
-            description = "Add new car into car database"
+            summary = "Add new customer",
+            description = "Add new customer into customer database"
     )
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "201",
                     description = "successful operation",
-                    content = @Content(schema = @Schema(implementation = CarResponseDto.class))
+                    content = @Content(schema = @Schema(implementation = CustomerResponseDto.class))
             ),
             @ApiResponse(
                     responseCode = "400",
                     description = "Errors resulting from incorrect input parameters (catched by @Valid constrains)",
+                    content = @Content(schema = @Schema(implementation = ErrorDto.class))
+            ),
+            @ApiResponse(
+                    responseCode = "406",
+                    description = "Custom errors resulting from incorrect input parameters (e.g. child age of customer, etc)",
                     content = @Content(schema = @Schema(implementation = ErrorDto.class))
             ),
             @ApiResponse(
@@ -50,24 +57,24 @@ public class CarController {
 
     })
     @PostMapping(
-            value = CARURI,
+            value = CUSTOMERURI,
             produces = "application/json"
     )
-    public ResponseEntity<CarResponseDto> save(
-            @Valid @RequestBody CarDto car
+    public ResponseEntity<CustomerResponseDto> save(
+            @Valid @RequestBody CustomerDto dto
     ) {
-        return new ResponseEntity<>(carService.save(car), HttpStatus.CREATED);
+        return new ResponseEntity<>(customerService.save(dto), HttpStatus.CREATED);
     }
 
     @Operation(
-            summary = "Update car",
-            description = "Update particular car in car database"
+            summary = "Update customer",
+            description = "Update particular customer in customer database"
     )
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
                     description = "successful operation",
-                    content = @Content(schema = @Schema(implementation = CarResponseDto.class))
+                    content = @Content(schema = @Schema(implementation = CustomerResponseDto.class))
             ),
             @ApiResponse(
                     responseCode = "400",
@@ -86,29 +93,29 @@ public class CarController {
             )
     })
     @PutMapping(
-            value = CARURI + "/{id}",
+            value = CUSTOMERURI + "/{id}",
             produces = "application/json"
     )
-    public ResponseEntity<CarResponseDto> update(
+    public ResponseEntity<CustomerResponseDto> update(
             @PathVariable Long id,
-            @Valid @RequestBody CarDto car
+            @Valid @RequestBody CustomerDto dto
     ) {
-        return new ResponseEntity<>(carService.update(id,car), HttpStatus.OK);
+        return new ResponseEntity<>(customerService.update(id,dto), HttpStatus.OK);
     }
 
     @Operation(
-            summary = "Fetch single car by ID",
-            description = "Fetches selected car from database"
+            summary = "Fetch single customer by ID",
+            description = "Fetches selected customer from database"
     )
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
                     description = "successful operation",
-                    content = @Content(schema = @Schema(implementation = CarResponseDto.class))
+                    content = @Content(schema = @Schema(implementation = CustomerResponseDto.class))
             ),
             @ApiResponse(
                     responseCode = "204",
-                    description = "empty body -> no car found with set ID",
+                    description = "empty body -> no customer found with set ID",
                     content = @Content(schema = @Schema())
             ),
             @ApiResponse(
@@ -123,27 +130,27 @@ public class CarController {
             )
     })
     @GetMapping(
-            value = CARURI + "/{id}",
+            value = CUSTOMERURI + "/{id}",
             produces = "application/json"
     )
     public ResponseEntity<?> findById(
             @PathVariable Long id
     ) {
-        CarResponseDto responseDto = carService.findById(id);
+        CustomerResponseDto responseDto = customerService.findById(id);
         HttpStatus httpStatus = responseDto == null? HttpStatus.NO_CONTENT : HttpStatus.OK;
 
         return new ResponseEntity<>(responseDto, httpStatus);
     }
 
     @Operation(
-            summary = "Fetch all cars",
-            description = "Fetches all cars from car database"
+            summary = "Fetch all customers",
+            description = "Fetches all customers from customer database"
     )
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
                     description = "successful operation",
-                    content = @Content(schema = @Schema(implementation = CarResponseDto.class))
+                    content = @Content(schema = @Schema(implementation = CustomerResponseDto.class))
             ),
             @ApiResponse(
                     responseCode = "400",
@@ -157,22 +164,22 @@ public class CarController {
             )
     })
     @GetMapping(
-            value = CARURI,
+            value = CUSTOMERURI,
             produces = "application/json"
     )
-    public ResponseEntity<List<CarResponseDto>> findAll() {
-        return new ResponseEntity<>(carService.findAll(), HttpStatus.OK);
+    public ResponseEntity<List<CustomerResponseDto>> findAll() {
+        return new ResponseEntity<>(customerService.findAll(), HttpStatus.OK);
     }
 
     @Operation(
-            summary = "Discard car by ID",
-            description = "Marking selected car as 'Discareded' in car database (substitutes real deletion)"
+            summary = "Delete customer by ID",
+            description = "Deleting selected customer from custromer database"
     )
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
-                    description = "successful operation",
-                    content = @Content(schema = @Schema(implementation = CarResponseDto.class))
+                    description = "successful operation returns deleted customer",
+                    content = @Content(schema = @Schema(implementation = CustomerResponseDto.class))
             ),
             @ApiResponse(
                     responseCode = "400",
@@ -191,13 +198,50 @@ public class CarController {
             )
     })
     @DeleteMapping(
-            value = CARURI + "/{id}",
+            value = CUSTOMERURI + "/{id}",
             produces = "application/json"
     )
-    public ResponseEntity<CarResponseDto> deleteById(
+    public ResponseEntity<CustomerResponseDto> deleteById(
             @PathVariable Long id
     ) {
-        return new ResponseEntity<>(carService.deleteById(id), HttpStatus.OK);
+        return new ResponseEntity<>(customerService.deleteById(id), HttpStatus.OK);
+    }
+
+
+    @Operation(
+            summary = "All previously rented cars by specified customer",
+            description = "Fetches all previously rented cars for specified customer ID"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "successful operation",
+                    content = @Content(schema = @Schema(implementation = CustomerRentalResponseDto.class))
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "Errors resulting from incorrect input parameters (catched by @Valid constrains)",
+                    content = @Content(schema = @Schema(implementation = ErrorDto.class))
+            ),
+            @ApiResponse(
+                    responseCode = "406",
+                    description = "Custom errors resulting from incorrect input parameters (e.g. non existent entity in DB, etc)",
+                    content = @Content(schema = @Schema(implementation = ErrorDto.class))
+            ),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "All other errors for simplification",
+                    content = @Content(schema = @Schema(implementation = ErrorDto.class))
+            )
+    })
+    @GetMapping(
+            value = CUSTOMERURI + "/{id}/rentals",
+            produces = "application/json"
+    )
+    public ResponseEntity<List<CustomerRentalResponseDto>> findRentalsByCustomerId(
+            @PathVariable Long id
+    ) {
+        return new ResponseEntity<List<CustomerRentalResponseDto>>(customerService.findRentalsByCustomerId(id), HttpStatus.OK);
     }
 
 }
