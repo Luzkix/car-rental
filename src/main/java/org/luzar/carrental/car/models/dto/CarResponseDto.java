@@ -17,8 +17,6 @@ public record CarResponseDto(
 
         String licensePlate,
 
-        boolean rentable,
-
         int priceCategory,
 
         boolean discarded,

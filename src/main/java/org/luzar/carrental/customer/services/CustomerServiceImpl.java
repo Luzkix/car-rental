@@ -1,6 +1,5 @@
 package org.luzar.carrental.customer.services;
 
-import org.luzar.carrental.car.models.Car;
 import org.luzar.carrental.customer.models.Customer;
 import org.luzar.carrental.customer.models.dto.CustomerDto;
 import org.luzar.carrental.customer.models.dto.CustomerRentalResponseDto;
@@ -8,14 +7,11 @@ import org.luzar.carrental.customer.models.dto.CustomerResponseDto;
 import org.luzar.carrental.customer.repositories.CustomerRepository;
 import org.luzar.carrental.globalexceptionhandling.customexceptions.CustomExceptionChildBirthDate;
 import org.luzar.carrental.globalexceptionhandling.customexceptions.CustomExceptionEntityNotFound;
-import org.luzar.carrental.rental.models.Rental;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 
 import java.time.LocalDate;
 import java.time.Period;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -51,6 +47,11 @@ public class CustomerServiceImpl implements CustomerService{
         return customerMapper.customerIntoResponseDto(
                 customerRepository.findById(id).orElse(null)
         );
+    }
+
+    @Override
+    public Customer findCustomerById(Long id) {
+        return customerRepository.findById(id).orElse(null);
     }
 
     @Override

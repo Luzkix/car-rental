@@ -51,6 +51,11 @@ public class CarServiceImpl implements CarService{
     }
 
     @Override
+    public Car findCarById(Long id) {
+        return carRepository.findById(id).orElse(null);
+    }
+
+    @Override
     public List<CarResponseDto> findAll() {
         return carRepository.findAll().stream()
                 .map(carMapper::carIntoResponseDto)
@@ -63,7 +68,6 @@ public class CarServiceImpl implements CarService{
 
         if (car == null) throw new CustomExceptionEntityNotFound("Car with ID " + id + " is not in DB, thus cannot be discarded");
 
-        car.setRentable(false);
         car.setDiscarded(true);
         car.setDiscardedDate(LocalDate.now());
 

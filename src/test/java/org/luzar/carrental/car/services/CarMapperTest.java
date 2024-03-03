@@ -29,7 +29,6 @@ class CarMapperTest {
                 "red",
                 50,
                 "A000B00",
-                true,
                 1
         );
 
@@ -43,7 +42,6 @@ class CarMapperTest {
         assertEquals(dto.color(),car.getColor());
         assertEquals(dto.mileage(),car.getMileage());
         assertEquals(dto.licensePlate(),car.getLicensePlate());
-        assertEquals(dto.rentable(),car.isRentable());
         assertEquals(dto.priceCategory(),car.getPriceCategory());
 
         assertFalse(car.isDiscarded());
@@ -69,7 +67,6 @@ class CarMapperTest {
                 "red",
                 50,
                 "A000B00",
-                true,
                 1,
                 true,
                 LocalDate.parse("2024-03-03"),
@@ -87,7 +84,6 @@ class CarMapperTest {
         assertEquals(response.color(),car.getColor());
         assertEquals(response.mileage(),car.getMileage());
         assertEquals(response.licensePlate(),car.getLicensePlate());
-        assertEquals(response.rentable(),car.isRentable());
         assertEquals(response.priceCategory(),car.getPriceCategory());
         assertEquals(response.discarded(),car.isDiscarded());
         assertEquals(response.discardedDate(),car.getDiscardedDate());

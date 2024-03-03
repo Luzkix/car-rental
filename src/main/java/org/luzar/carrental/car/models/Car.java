@@ -3,7 +3,6 @@ package org.luzar.carrental.car.models;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.PositiveOrZero;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -43,9 +42,6 @@ public class Car {
 
     @Column
     private String licensePlate;
-
-    @Column
-    private boolean rentable;
 
     @Column
     private int priceCategory;

@@ -1,4 +1,4 @@
-package org.luzar.carrental.customer.controllers;
+package org.luzar.carrental.rental.controllers;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -7,36 +7,37 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.PositiveOrZero;
 import lombok.AllArgsConstructor;
-import org.luzar.carrental.customer.models.dto.CustomerDto;
-import org.luzar.carrental.customer.models.dto.CustomerRentalResponseDto;
-import org.luzar.carrental.customer.models.dto.CustomerResponseDto;
-import org.luzar.carrental.customer.services.CustomerService;
 import org.luzar.carrental.globalexceptionhandling.dto.ErrorDto;
+import org.luzar.carrental.rental.models.dto.RentalDto;
+import org.luzar.carrental.rental.models.dto.RentalResponseDto;
+import org.luzar.carrental.rental.services.RentalService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
 @RequestMapping("/api")
 @AllArgsConstructor
-@Tag(name = "Customer", description = "Customer management Api")
-public class CustomerController {
-    public static final String CUSTOMERURI = "/customer";
+@Tag(name = "Rental", description = "Rental management Api")
+public class RentalController {
+    public static final String RENTALURI = "/rental";
 
-    private CustomerService customerService;
+    private RentalService rentalService;
 
     @Operation(
-            summary = "Add new customer",
-            description = "Add new customer into customer database"
+            summary = "Add new rental",
+            description = "Add new rental into rental database"
     )
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "201",
                     description = "successful operation",
-                    content = @Content(schema = @Schema(implementation = CustomerResponseDto.class))
+                    content = @Content(schema = @Schema(implementation = RentalResponseDto.class))
             ),
             @ApiResponse(
                     responseCode = "400",
@@ -45,7 +46,7 @@ public class CustomerController {
             ),
             @ApiResponse(
                     responseCode = "406",
-                    description = "Custom errors resulting from incorrect input parameters (e.g. child age of customer, etc)",
+                    description = "Custom errors resulting from incorrect input parameters (e.g. wrong IDs, etc)",
                     content = @Content(schema = @Schema(implementation = ErrorDto.class))
             ),
             @ApiResponse(
@@ -56,24 +57,24 @@ public class CustomerController {
 
     })
     @PostMapping(
-            value = CUSTOMERURI,
+            value = RENTALURI,
             produces = "application/json"
     )
-    public ResponseEntity<CustomerResponseDto> save(
-            @Valid @RequestBody CustomerDto dto
+    public ResponseEntity<RentalResponseDto> save(
+            @Valid @RequestBody RentalDto dto
     ) {
-        return new ResponseEntity<>(customerService.save(dto), HttpStatus.CREATED);
+        return new ResponseEntity<>(rentalService.save(dto), HttpStatus.CREATED);
     }
 
     @Operation(
-            summary = "Update customer",
-            description = "Update particular customer in customer database"
+            summary = "Update rental",
+            description = "Set rentedToDate field or override rentPrice in rental database"
     )
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
                     description = "successful operation",
-                    content = @Content(schema = @Schema(implementation = CustomerResponseDto.class))
+                    content = @Content(schema = @Schema(implementation = RentalResponseDto.class))
             ),
             @ApiResponse(
                     responseCode = "400",
@@ -92,29 +93,31 @@ public class CustomerController {
             )
     })
     @PutMapping(
-            value = CUSTOMERURI + "/{id}",
+            value = RENTALURI + "/{id}",
             produces = "application/json"
     )
-    public ResponseEntity<CustomerResponseDto> update(
+    public ResponseEntity<RentalResponseDto> update(
             @PathVariable Long id,
-            @Valid @RequestBody CustomerDto dto
+            @RequestParam(value = "rentedToDate", required = false) LocalDate rentedToDate,
+            @PositiveOrZero
+            @RequestParam(value = "rentPrice", required = false) Integer rentPrice
     ) {
-        return new ResponseEntity<>(customerService.update(id,dto), HttpStatus.OK);
+        return new ResponseEntity<>(rentalService.update(id, rentedToDate, rentPrice), HttpStatus.OK);
     }
 
     @Operation(
-            summary = "Fetch single customer by ID",
-            description = "Fetches selected customer from database"
+            summary = "Fetch single rental by ID",
+            description = "Fetches selected rental from database"
     )
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
                     description = "successful operation",
-                    content = @Content(schema = @Schema(implementation = CustomerResponseDto.class))
+                    content = @Content(schema = @Schema(implementation = RentalResponseDto.class))
             ),
             @ApiResponse(
                     responseCode = "204",
-                    description = "empty body -> no customer found with set ID",
+                    description = "empty body -> no rental found with set ID",
                     content = @Content(schema = @Schema())
             ),
             @ApiResponse(
@@ -129,27 +132,28 @@ public class CustomerController {
             )
     })
     @GetMapping(
-            value = CUSTOMERURI + "/{id}",
+            value = RENTALURI + "/{id}",
             produces = "application/json"
     )
     public ResponseEntity<?> findById(
             @PathVariable Long id
     ) {
-        CustomerResponseDto responseDto = customerService.findById(id);
+        RentalResponseDto responseDto = rentalService.findById(id);
         HttpStatus httpStatus = responseDto == null? HttpStatus.NO_CONTENT : HttpStatus.OK;
 
         return new ResponseEntity<>(responseDto, httpStatus);
     }
 
+
     @Operation(
-            summary = "Fetch all customers",
-            description = "Fetches all customers from customer database"
+            summary = "Fetch all rentals",
+            description = "Fetches all rentals from customer database"
     )
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
                     description = "successful operation",
-                    content = @Content(schema = @Schema(implementation = CustomerResponseDto.class))
+                    content = @Content(schema = @Schema(implementation = RentalResponseDto.class))
             ),
             @ApiResponse(
                     responseCode = "400",
@@ -163,22 +167,22 @@ public class CustomerController {
             )
     })
     @GetMapping(
-            value = CUSTOMERURI,
+            value = RENTALURI,
             produces = "application/json"
     )
-    public ResponseEntity<List<CustomerResponseDto>> findAll() {
-        return new ResponseEntity<>(customerService.findAll(), HttpStatus.OK);
+    public ResponseEntity<List<RentalResponseDto>> findAll() {
+        return new ResponseEntity<>(rentalService.findAll(), HttpStatus.OK);
     }
 
     @Operation(
-            summary = "Delete customer by ID",
-            description = "Deleting selected customer from custromer database"
+            summary = "Delete rental by ID",
+            description = "Deleting selected rental from rental database"
     )
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
                     description = "successful operation returns deleted customer",
-                    content = @Content(schema = @Schema(implementation = CustomerResponseDto.class))
+                    content = @Content(schema = @Schema(implementation = RentalResponseDto.class))
             ),
             @ApiResponse(
                     responseCode = "400",
@@ -197,50 +201,13 @@ public class CustomerController {
             )
     })
     @DeleteMapping(
-            value = CUSTOMERURI + "/{id}",
+            value = RENTALURI + "/{id}",
             produces = "application/json"
     )
-    public ResponseEntity<CustomerResponseDto> deleteById(
+    public ResponseEntity<RentalResponseDto> deleteById(
             @PathVariable Long id
     ) {
-        return new ResponseEntity<>(customerService.deleteById(id), HttpStatus.OK);
-    }
-
-
-    @Operation(
-            summary = "All previously rented cars by specified customer",
-            description = "Fetches all previously rented cars for specified customer ID"
-    )
-    @ApiResponses(value = {
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "successful operation",
-                    content = @Content(schema = @Schema(implementation = CustomerRentalResponseDto.class))
-            ),
-            @ApiResponse(
-                    responseCode = "400",
-                    description = "Errors resulting from incorrect input parameters (catched by @Valid constrains)",
-                    content = @Content(schema = @Schema(implementation = ErrorDto.class))
-            ),
-            @ApiResponse(
-                    responseCode = "406",
-                    description = "Custom errors resulting from incorrect input parameters (e.g. non existent entity in DB, etc)",
-                    content = @Content(schema = @Schema(implementation = ErrorDto.class))
-            ),
-            @ApiResponse(
-                    responseCode = "500",
-                    description = "All other errors for simplification",
-                    content = @Content(schema = @Schema(implementation = ErrorDto.class))
-            )
-    })
-    @GetMapping(
-            value = CUSTOMERURI + "/{id}/rentals",
-            produces = "application/json"
-    )
-    public ResponseEntity<List<CustomerRentalResponseDto>> findRentalsByCustomerId(
-            @PathVariable Long id
-    ) {
-        return new ResponseEntity<>(customerService.findRentalsByCustomerId(id), HttpStatus.OK);
+        return new ResponseEntity<>(rentalService.deleteById(id), HttpStatus.OK);
     }
 
 }

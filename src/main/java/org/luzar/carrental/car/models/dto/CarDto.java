@@ -27,9 +27,6 @@ public record CarDto(
         String licensePlate,
 
         @NotNull
-        boolean rentable,
-
-        @NotNull
         @Min(value = 1, message = "Price category must be between 1 and 3")
         @Max(value = 3, message = "Price category must be between 1 and 3")
         int priceCategory

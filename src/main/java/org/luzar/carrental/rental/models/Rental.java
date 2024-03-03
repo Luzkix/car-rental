@@ -33,9 +33,6 @@ public class Rental {
     private LocalDate rentedToDate;
 
     @Column
-    private boolean activeRental;
-
-    @Column
     private int rentPrice;
 
 

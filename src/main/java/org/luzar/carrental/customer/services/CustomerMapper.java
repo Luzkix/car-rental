@@ -1,8 +1,5 @@
 package org.luzar.carrental.customer.services;
 
-import org.luzar.carrental.car.models.Car;
-import org.luzar.carrental.car.models.dto.CarDto;
-import org.luzar.carrental.car.models.dto.CarResponseDto;
 import org.luzar.carrental.customer.models.Customer;
 import org.luzar.carrental.customer.models.dto.CustomerDto;
 import org.luzar.carrental.customer.models.dto.CustomerRentalResponseDto;
@@ -44,6 +41,7 @@ public class CustomerMapper {
                 rental.getCar().getId(),
                 rental.getCar().getBrand(),
                 rental.getCar().getModel(),
+                rental.getId(),
                 rental.getRentedFromDate(),
                 rental.getRentedToDate(),
                 rental.getRentPrice()

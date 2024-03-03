@@ -1,5 +1,6 @@
 package org.luzar.carrental.customer.services;
 
+import org.luzar.carrental.customer.models.Customer;
 import org.luzar.carrental.customer.models.dto.CustomerDto;
 import org.luzar.carrental.customer.models.dto.CustomerRentalResponseDto;
 import org.luzar.carrental.customer.models.dto.CustomerResponseDto;
@@ -15,6 +16,8 @@ public interface CustomerService {
     List<CustomerResponseDto> findAll();
 
     CustomerResponseDto findById(Long id);
+
+    Customer findCustomerById(Long id);
 
     CustomerResponseDto update(Long id, CustomerDto dto) throws CustomExceptionEntityNotFound;
 

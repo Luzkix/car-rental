@@ -2,6 +2,7 @@ package org.luzar.carrental.globalexceptionhandling;
 
 
 import lombok.extern.slf4j.Slf4j;
+import org.luzar.carrental.globalexceptionhandling.customexceptions.CustomExceptionAllInputParametersNull;
 import org.luzar.carrental.globalexceptionhandling.customexceptions.CustomExceptionChildBirthDate;
 import org.luzar.carrental.globalexceptionhandling.customexceptions.CustomExceptionEntityNotFound;
 import org.luzar.carrental.globalexceptionhandling.dto.ErrorDto;
@@ -43,6 +44,7 @@ public class ControllerAdvisor extends ResponseEntityExceptionHandler {
             DataIntegrityViolationException.class,
             CustomExceptionEntityNotFound.class,
             CustomExceptionChildBirthDate.class,
+            CustomExceptionAllInputParametersNull.class,
     })
     public ResponseEntity<ErrorDto> handleIncorrectInputsExceptions(Exception ex) {
         HttpStatus status = HttpStatus.NOT_ACCEPTABLE;

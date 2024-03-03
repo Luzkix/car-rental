@@ -18,7 +18,6 @@ public class CarMapper {
                 .color(dto.color())
                 .mileage(dto.mileage())
                 .licensePlate(dto.licensePlate())
-                .rentable(dto.rentable())
                 .priceCategory(dto.priceCategory())
                 .build();
     }
@@ -33,7 +32,6 @@ public class CarMapper {
                 car.getColor(),
                 car.getMileage(),
                 car.getLicensePlate(),
-                car.isRentable(),
                 car.getPriceCategory(),
                 car.isDiscarded(),
                 car.getDiscardedDate()
